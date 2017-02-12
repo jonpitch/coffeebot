@@ -4,8 +4,8 @@
   "description": "the percolations are imminent.",
   "main": "lib/index.js",
   "dependencies": {
-    "johnny-five": "0.9.59",
-    "raspi-io": "6.1.0"
+    "johnny-five": "0.10.6",
+    "raspi-io": "7.2.2"
   },
   "devDependencies": {
     "babel-cli": "^6.6.5",
@@ -22,7 +22,8 @@
   "keywords": [
     "node",
     "nodebot",
-    "johnny-five"
+    "johnny-five",
+    "raspi-io"
   ],
   "author": "Jon Pitcherella",
   "license": "MIT",
