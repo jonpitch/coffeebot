@@ -9,7 +9,7 @@ const board = new five.Board({
 
 // setup notifications
 import Slack from 'notifications/slack';
-import Log from 'notifications/console';
+import Log from 'notifications/log';
 
 let notification;
 if (config.get('notification_type') === 'slack') {
