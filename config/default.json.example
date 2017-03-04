@@ -1,5 +1,20 @@
 {
   "threshold": 115,
   "consecutive": 200,
-  "brew_time": 480000
+  "brew_time": 480000,
+  "notification_type": "slack",
+  "notification": {
+    "slack": {
+      "webhook": "https://your-webhook-here",
+      "channel": "#some-channel"
+    }
+  },
+  "notification_messages": {
+    "start": [
+      "The percolations are imminent"
+    ],
+    "done": [
+      "Coffee is ready"
+    ]
+  }
 }

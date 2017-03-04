@@ -7,6 +7,17 @@ const board = new five.Board({
   io: new raspi()
 });
 
+// setup notifications
+import slack from 'notifications/slack';
+import log from 'sensors/console';
+
+let notification;
+if (config.get('notification_type') === 'slack') {
+  notification = slack;
+} else {
+  notification = log;
+}
+
 const BREW_THRESHOLD = config.get('threshold');
 const CONSECUTIVE_BREWS = config.get('consecutive');
 const BREW_TIME = config.get('brew_time');
@@ -16,7 +27,8 @@ let isBrewing = false;
 
 board.on('ready', function() {
   
-  console.log('coffeebot is online');
+  // pot is online
+  notification.online();
 
   // setup expander
   const virtual = new five.Board.Virtual(
@@ -49,18 +61,17 @@ board.on('ready', function() {
     if (value === 1 && pulses.length > 9 && !isBrewing) {
       // what is the average time between pulses
       const average = pulses.reduce((a, b) => { return a + b; }) / pulses.length;
-      console.log(`average time: ${average}`);
       
       if (average > 0 && average < (BREW_THRESHOLD * 2)) {
         // pulse is in range
         brewPulseCount++;
         if (brewPulseCount > CONSECUTIVE_BREWS && !isBrewing) {
           isBrewing = true;
-          console.log('definitely brewing');
+          notification.brewing();
           setTimeout(() => {
             brewPulseCount = 0;
             isBrewing = false;
-            console.log('brewing complete');
+            notification.finished();
           }, BREW_TIME);
         }
         
@@ -78,7 +89,7 @@ board.on('ready', function() {
   
   // on shutdown
   this.on('exit', function() {
-    console.log('coffeebot is offline');
+    notification.offline();
   });
   
   // helpers to add to REPL

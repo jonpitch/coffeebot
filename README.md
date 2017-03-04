@@ -1,6 +1,8 @@
 # coffeebot
 The percolations are imminent.
 
+![The percolations are imminent](assets/burns-coffee.jpg "I smashed the beans myself")
+
 # parts
 - Raspberry Pi Zero
 - [MCP23008](https://www.adafruit.com/products/593)
@@ -44,6 +46,9 @@ sudo dpkg -i node_latest_armhf.deb
 * `threshold` description
 * `consecutive` description
 * `brew_time` description
+* `notification_type`
+* `notification`
+* `notification_messages`
 
 # usage
 coming soon
