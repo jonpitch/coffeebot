@@ -1,7 +1,7 @@
 # coffeebot
 The percolations are imminent.
 
-![The percolations are imminent](assets/burns-coffee.jpg "I smashed the beans myself")
+![The percolations are imminent](assets/burns-coffee.jpg "I stomped the beans myself!")
 
 # parts
 - Raspberry Pi Zero

@@ -8,14 +8,14 @@ const board = new five.Board({
 });
 
 // setup notifications
-import slack from 'notifications/slack';
-import log from 'sensors/console';
+import Slack from 'notifications/slack';
+import Log from 'notifications/console';
 
 let notification;
 if (config.get('notification_type') === 'slack') {
-  notification = slack;
+  notification = new Slack();
 } else {
-  notification = log;
+  notification = new Log();
 }
 
 const BREW_THRESHOLD = config.get('threshold');

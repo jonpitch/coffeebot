@@ -1,9 +1,7 @@
 import Notification from 'notifications/notification';
 
-/**
-  DS18B20 Temperature Sensor
-*/
-export default class Console extends Notification {
+// writes to console
+export default class Log extends Notification {
 
   constructor() {
     super();

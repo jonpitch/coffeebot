@@ -3,9 +3,7 @@ import Notification from 'notifications/notification';
 
 const slack = require('slack-notify')(config.get('notification.slack.webhook'));
 
-/**
-  DS18B20 Temperature Sensor
-*/
+// sends slack notification
 export default class Slack extends Notification {
 
   constructor() {
