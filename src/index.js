@@ -87,7 +87,11 @@ board.on('ready', function() {
     }
   });
   
-  // on shutdown
+  // on fail and shutdown
+  this.on('fail', function() {
+    notification.offline();
+  });
+  
   this.on('exit', function() {
     notification.offline();
   });

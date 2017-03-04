@@ -2,6 +2,8 @@ import config from 'config';
 import Notification from 'notifications/notification';
 
 const slack = require('slack-notify')(config.get('notification.slack.webhook'));
+const username = 'coffeebot';
+const emoji = ':coffee:';
 
 // sends slack notification
 export default class Slack extends Notification {
@@ -9,50 +11,41 @@ export default class Slack extends Notification {
   constructor() {
     super();
   }
+  
+  // send slack notification
+  // type: 'good|warning|danger' or a hex color
+  // message: the notification to send
+  send(type, message) {
+    slack.send({
+      username,
+      icon_emoji: emoji,
+      channel: config.get('notification.slack.channel'),
+      attachments: [{
+        text: message,
+        color: type
+      }]
+    });
+  }
 
   // bot is online
   online() {
-    slack.send({
-      channel: config.get('notification.slack.channel'),
-      attachments: [{
-        text: 'coffeebot is online',
-        color: 'good'
-      }]
-    });
+    this.send('good', 'coffeebot is online');
   }
   
   // bot is offline
   offline() {
-    slack.send({
-      channel: config.get('notification.slack.channel'),
-      attachments: [{
-        text: 'coffeebot is offline',
-        color: 'danger'
-      }]
-    });
+    this.send('danger', 'coffeebot is offline');
   }
   
   // coffee is brewing
   brewing() {
     const message = this.randomBrewingMessage();
-    slack.send({
-      channel: config.get('notification.slack.channel'),
-      attachments: [{
-        text: message,
-        color: 'warning'
-      }]
-    });
+    this.send('warning', message);
   }
   
   // coffee is ready
   finished() {
     const message = this.randomFinishedMessage();
-    slack.send({
-      channel: config.get('notification.slack.channel'),
-      attachments: [{
-        text: message,
-        color: 'good'
-      }]
-    });
+    this.send('good', mesesage);
   }
 }
