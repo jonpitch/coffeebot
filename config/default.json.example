@@ -1,0 +1,5 @@
+{
+  "threshold": 115,
+  "consecutive": 200,
+  "brew_time": 480000
+}

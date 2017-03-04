@@ -41,7 +41,9 @@ sudo dpkg -i node_latest_armhf.deb
 - discharge capacitor, time from full to full changes based on current
 
 # configuration
-coming soon
+* `threshold` description
+* `consecutive` description
+* `brew_time` description
 
 # usage
 coming soon

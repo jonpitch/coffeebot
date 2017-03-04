@@ -1,21 +1,18 @@
 import raspi from 'raspi-io';
 import five from 'johnny-five';
+import config from 'config';
 
 // setup board
 const board = new five.Board({
   io: new raspi()
 });
 
-// times in milliseconds
-// TODO configurable
-const brewingThreshold = 200;
-const heatingThreshold = 1700;
-const idleThreshold = 2500;
-const leeway = 200;
-const brewTime = 480000;
+const BREW_THRESHOLD = config.get('threshold');
+const CONSECUTIVE_BREWS = config.get('consecutive');
+const BREW_TIME = config.get('brew_time');
 
-// state of coffeepot - 'brewing', 'heating', 'idle'
-let state = 'idle';
+// is the pot actively brewing
+let isBrewing = false;
 
 board.on('ready', function() {
   
@@ -33,53 +30,49 @@ board.on('ready', function() {
     type: 'digital'
   });
   
+  let previous = null;
   let pulses = [];
+  let brewPulseCount = 0;
   current.on('change', () => {
-    const value = this.value;
+    const value = current.value;
     const now = Date.now();
     
-    if (value === 1 && pulses.length > 10) {
-      // remove first element, add next time, calculate average
-      pulses.shift();
-      pulses.push(now);
+    // push time onto stack
+    if (previous !== null) {
+      pulses.push(now - previous);
+      if (pulses.length > 10) {
+        pulses = pulses.slice(1);
+      }
+    }
+    
+    previous = now;
+    if (value === 1 && pulses.length > 9 && !isBrewing) {
+      // what is the average time between pulses
       const average = pulses.reduce((a, b) => { return a + b; }) / pulses.length;
       console.log(`average time: ${average}`);
       
-      if (average < (brewingThreshold + leeway) || 
-          average > (brewingThreshold - leeway) &&
-          state !== 'brewing' &&
-          state !== 'heating'
-      ) {
-        // possible brewing
-        state = 'brewing';
+      if (average > 0 && average < (BREW_THRESHOLD * 2)) {
+        // pulse is in range
+        brewPulseCount++;
+        if (brewPulseCount > CONSECUTIVE_BREWS && !isBrewing) {
+          isBrewing = true;
+          console.log('definitely brewing');
+          setTimeout(() => {
+            brewPulseCount = 0;
+            isBrewing = false;
+            console.log('brewing complete');
+          }, BREW_TIME);
+        }
         
-        // TODO send notification about brewing started
-        console.log('percolations are imminent');
-        
-        // TODO set timeout -> in x minutes, notify coffee is ready
-        setTimeout(() => {
-          console.log('coffee is ready');
-        }, brewTime);
-        
-      } else if (average < (heatingTreshold + leeway) || 
-          average > (heatingTreshold - leeway) &&
-          state !== 'heating' &&
-          state !== 'idle'
-      ) {
-        // possible heating
-        state = 'heating';
-        console.log('coffee pot is heating');
+      } else if (brewPulseCount > 125) {
+        // some recent potential brewing activity, handling outliers
+        brewPulseCount--;
         
       } else {
-        // possible idle
-        state = 'idle';
-        console.log('coffee pot is chillin');
+        // reset
+        brewPulseCount = 0;
       }
 
-    } else if (value === 1) {
-      // push time onto stack
-      pulses.push(now);
-      console.log('initializing...');
     }
   });
   
