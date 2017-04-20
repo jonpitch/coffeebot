@@ -46,6 +46,6 @@ export default class Slack extends Notification {
   // coffee is ready
   finished() {
     const message = this.randomFinishedMessage();
-    this.send('good', mesesage);
+    this.send('good', message);
   }
 }
